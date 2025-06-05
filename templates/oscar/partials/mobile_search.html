@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<form id='search-form' class="items-center mr-3 mt-2 hidden md:hidden w-full" method="GET" action="{% url 'search:search' %}">
+    <input class="bg-white border border-gray-300 w-full rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-primary" name="q" id="id_q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}">
+    <button class="p-1 mt-1.5 w-7 h-7 bg-primary rounded-full -ml-9" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+        const searchForm = document.getElementById('search-form');
+
+        mobileSearchToggle.addEventListener('click', function() {
+            searchForm.classList.toggle('hidden');
+            searchForm.classList.toggle('flex');
+            searchForm.classList.toggle('items-center');
+        });
+    });
+</script>

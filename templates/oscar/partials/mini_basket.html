@@ -1,0 +1,57 @@
+{% load currency_filters %}
+{% load custom_tags %}
+{% load i18n %}
+
+{% comment %} 
+<div class="mini-basket d-flex justify-content-between align-items-center">
+    <strong>{% trans "Basket total:" %}</strong>
+    {% if request.basket.is_tax_known %}
+        {{ request.basket.total_incl_tax|currency:request.basket.currency }}
+    {% else %}
+        {{ request.basket.total_excl_tax|currency:request.basket.currency }}
+    {% endif %}
+
+    <div class="btn-group">
+      <button type="button" class="{% block mini_basket_btn_classes %}btn btn-outline-secondary{% endblock %}" onclick="window.location.href='{% url 'basket:summary' %}';">{% trans "View basket" %}</button>
+      <button type="button" class="{% block mini_basket_toggle_classes %}btn btn-outline-secondary dropdown-toggle dropdown-toggle-split{% endblock %}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <div class="{% block mini_basket_dropdown_classes %}dropdown-menu dropdown-menu-right{% endblock %}">
+        {% include "oscar/basket/partials/basket_quick.html" %}
+      </div>
+    </div>
+</div> 
+{% endcomment %}
+
+<button id="mini-basket-toggle" class="bg-white px-2 py-1.5 rounded flex gap-1 items-center hover:bg-gray-100">
+    <span class="text-gray-800">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag-icon lucide-shopping-bag"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </span>
+    <span class="text-gray-800 text-sm">
+        {% if request.basket.is_tax_known %}
+            {{ request.basket.total_incl_tax|intprice }}
+        {% else %}
+            {{ request.basket.total_excl_tax|intprice }}
+        {% endif %}
+    </span>
+    <div id="mini-basket-quick" class="absolute top-14 right-2 z-50 hidden border border-gray-200 bg-white shadow-lg rounded w-64">
+        {% include "oscar/basket/partials/basket_quick.html" %}
+    </div>
+    <script>
+      function toggleBasketQuick() {
+          const basketQuick = document.querySelector('#mini-basket-quick');
+          basketQuick.classList.toggle('hidden');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+          const miniBasketToggle = document.getElementById('mini-basket-toggle');
+          miniBasketToggle.addEventListener('click', toggleBasketQuick);
+          
+          // Close the basket quick view when clicking outside
+          document.addEventListener('click', function(event) {
+              if (!miniBasketToggle.contains(event.target) && !document.querySelector('#mini-basket-quick').contains(event.target)) {
+                  document.querySelector('#mini-basket-quick').classList.add('hidden');
+              }
+          });
+      });
+    </script>
+</button>

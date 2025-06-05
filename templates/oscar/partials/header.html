@@ -1,0 +1,21 @@
+{# Site logo/title, mini-basket, browse dropdown and searchbox #}
+<header class="bg-white">
+    <div class="p-3 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                {% include "oscar/partials/brand.html" %}
+                {% include "oscar/partials/desktop_nav.html" %}
+            </div>
+            {# Mini-basket wrapped in a block so some templates can now display it #}
+
+            <div class="flex">
+                {% include "oscar/partials/search.html" %}
+                {% block mini_basket %}{% include "oscar/partials/mini_basket.html" %}{% endblock %}
+                {% include "oscar/partials/nav_accounts.html" %}
+                {% include "oscar/partials/mobile_nav.html" %}
+            </div>
+        </div>
+        {% include "oscar/partials/mobile_search.html" %}
+    </div>
+    
+</header>

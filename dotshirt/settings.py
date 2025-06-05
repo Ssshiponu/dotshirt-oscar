@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'oscar.apps.basket.apps.BasketConfig',
     'oscar.apps.payment.apps.PaymentConfig',
     'oscar.apps.offer.apps.OfferConfig',
-    'oscar.apps.order.apps.OrderConfig',
+    #'oscar.apps.order.apps.OrderConfig',
     'oscar.apps.customer.apps.CustomerConfig',
     'oscar.apps.search.apps.SearchConfig',
     'oscar.apps.voucher.apps.VoucherConfig',
@@ -73,12 +73,19 @@ INSTALLED_APPS = [
     'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
     'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
 
+    # Forked order app in the apps/order directory
+    'apps.order.apps.OrderConfig',
+
+
     # 3rd-party apps that oscar depends on
     'widget_tweaks',
     'haystack',
     'treebeard',
     'sorl.thumbnail',   
     'django_tables2',
+
+    # Custom apps
+    'apps.home.apps.HomeConfig',
 ]
 
 SITE_ID = 1
@@ -106,7 +113,7 @@ ROOT_URLCONF = 'dotshirt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -196,4 +203,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Oscar settings
 OSCAR_SHOP_NAME = "Dotshirt"
 OSCAR_SHOP_TAGLINE = "Your one-stop shop for custom t-shirts"
-OSCAR_DEFAULT_CURRENCY = 'BDT'
+OSCAR_DEFAULT_CURRENCY = "৳"
+
+OSCAR_ALLOW_ANON_CHECKOUT = True
+OSCAR_ALLOW_ANON_REVIEWS = True
