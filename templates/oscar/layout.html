@@ -3,6 +3,9 @@
 
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static "oscar/css/styles.css" %}" />
+    <script src="{% static "oscar/js/tailwindcss.js" %}"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    {% include "oscar/theme.html" %}
 {% endblock %}
 
 {% block layout %}
@@ -14,15 +17,15 @@
 
     {# Main content of page - other layout templates may override this block #}
     {% block content_wrapper %}
-        <div class="container page">
-            <div class="page_inner">
+        <div class="bg-white">
+            <div class="container">
                 {% block breadcrumbs %}{% endblock %}
                 {% block header %}
                     <div class="page-header">
                         <h1>{% block headertext %}{% endblock %}</h1>
                     </div>
                 {% endblock %}
-                {% include "oscar/partials/alert_messages.html" %}
+                {% comment %} {% include "oscar/partials/alert_messages.html" %} {% endcomment %}
                 {% block subnavigation %}{% endblock %}
                 <div class="content">
                     {% block subheader %}{% endblock subheader %}
@@ -40,8 +43,6 @@
 {# Local scripts #}
 {% block scripts %}
     {{ block.super }}
-    <!-- Twitter Bootstrap -->
-    <script src="{% static "oscar/js/bootstrap4/bootstrap.bundle.min.js" %}"></script>
     <!-- Oscar -->
     <script src="{% static "oscar/js/oscar/ui.js" %}"></script>
 {% endblock %}

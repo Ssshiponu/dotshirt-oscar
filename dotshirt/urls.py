@@ -14,6 +14,8 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
+    path('home/', include('apps.home.urls')),
+
     path('', include(apps.get_app_config('oscar').urls[0])),
 ]
 

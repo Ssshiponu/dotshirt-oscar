@@ -27,14 +27,13 @@
             {% include "oscar/partials/google_analytics.html" %}
         {% endblock %}
 
-        {% comment %} tailwindcss {% endcomment %}
-        <script src="{% static "oscar/js/tailwindcss.js" %}"></script>
-
-        {% include "oscar/theme.html" %}
+        
     </head>
 
     <body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}default{% endblock %}">
         {# Main content goes in this 'layout' block #}
+        {% include "oscar/flash_msg.html" %}
+
         {% block layout %}{% endblock %}
 
         {# Scripts loaded from a CDN. #}
