@@ -3,55 +3,131 @@
 
 {% with all_images=product.get_all_images %}
     {# use length rather then count as the images get queried anyways #}
-
     {% if all_images|length > 1 %}
-
-        <div id="product_gallery" class="carousel slide">
-
-            <div class="img-thumbnail mb-3">
-                <div class="carousel-inner">
-                {% for image in all_images %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
-                        <img src="{{ thumb.url }}" class="img-fluid" alt="{{ product.get_title }}" />
-                    </div>
-                {% endfor %}
+        <div id="product_gallery" class="relative w-full max-w-xxl mx-auto">
+            <!-- Main carousel container -->
+            <div class="bg-white mb-4 overflow-hidden">
+                <div class="relative">
+                    <!-- Carousel slides -->
+                    {% for image in all_images %}
+                        <div class="carousel-slide {% if forloop.first %}block{% else %}hidden{% endif %}" data-slide="{{ forloop.counter0 }}">
+                            {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
+                            <img src="{{ thumb.url }}" class="w-full h-96 object-contain" alt="{{ product.get_title }}" />
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Navigation arrows -->
+                    <button class="carousel-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span class="sr-only">{% trans "Previous" %}</span>
+                    </button>
+                    <button class="carousel-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        <span class="sr-only">{% trans "Next" %}</span>
+                    </button>
                 </div>
-                <a class="carousel-control-prev" href="#product_gallery" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{% trans "Previous" %}</span>
-                </a>
-                <a class="carousel-control-next" href="#product_gallery" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{% trans "Next" %}</span>
-                </a>
             </div>
-
-            <ol class="carousel-indicators img-thumbnail">
+            
+            <!-- Thumbnail indicators -->
+            <div class="flex space-x-2 overflow-x-auto pb-2">
                 {% for image in all_images %}
-                    <li data-target="#product_gallery" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}">
+                    <button class="carousel-indicator flex-shrink-0 border-2 border-transparent hover:border-blue-500 rounded-lg overflow-hidden transition-all duration-200 {% if forloop.first %}border-blue-500{% endif %}" 
+                            data-slide="{{ forloop.counter0 }}">
                         {% oscar_thumbnail image.original "65x55" crop="center" as thumb %}
-                        <img src="{{ thumb.url }}" class="img-fluid" alt="{{ product.get_title }}" />
-                    </li>
+                        <img src="{{ thumb.url }}" class="w-16 h-14 object-cover" alt="{{ product.get_title }}" />
+                    </button>
                 {% endfor %}
-            </ol>
+            </div>
         </div>
-
     {% else %}
-
         {# Only one image to show #}
-        <div id="product_gallery" class="carousel">
-            <div class="img-thumbnail">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
+        <div id="product_gallery" class="w-full max-w-lg mx-auto">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="relative">
                     {% with image=product.primary_image %}
                         {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
-                        <img src="{{ thumb.url }}" class="img-fluid" alt="{{ product.get_title }}" />
+                        <img src="{{ thumb.url }}" class="w-full h-96 object-contain" alt="{{ product.get_title }}" />
                     {% endwith %}
-                    </div>
                 </div>
             </div>
         </div>
-
     {% endif %}
 {% endwith %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const gallery = document.getElementById('product_gallery');
+    if (!gallery) return;
+    
+    const slides = gallery.querySelectorAll('.carousel-slide');
+    const indicators = gallery.querySelectorAll('.carousel-indicator');
+    const prevBtn = gallery.querySelector('.carousel-prev');
+    const nextBtn = gallery.querySelector('.carousel-next');
+    
+    if (slides.length <= 1) return; // No need for carousel functionality with single image
+    
+    let currentSlide = 0;
+    
+    function showSlide(index) {
+        // Hide all slides
+        slides.forEach(slide => slide.classList.add('hidden'));
+        slides[index].classList.remove('hidden');
+        
+        // Update indicators
+        indicators.forEach(indicator => {
+            indicator.classList.remove('border-blue-500');
+            indicator.classList.add('border-transparent');
+        });
+        indicators[index].classList.remove('border-transparent');
+        indicators[index].classList.add('border-blue-500');
+        
+        currentSlide = index;
+    }
+    
+    function nextSlide() {
+        const next = (currentSlide + 1) % slides.length;
+        showSlide(next);
+    }
+    
+    function prevSlide() {
+        const prev = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(prev);
+    }
+    
+    // Event listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', prevSlide);
+    }
+    
+    // Indicator clicks
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => showSlide(index));
+    });
+    
+    // Optional: Auto-advance slides (uncomment if desired)
+    /*
+    setInterval(nextSlide, 5000);
+    */
+    
+    // Optional: Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (gallery.contains(document.activeElement) || gallery === document.activeElement) {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+                e.preventDefault();
+            }
+        }
+    });
+});
+</script>

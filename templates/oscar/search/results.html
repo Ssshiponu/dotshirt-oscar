@@ -9,36 +9,42 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{{ homepage_url }}">{% trans "Home" %}</a>
-            </li>
-            <li class="breadcrumb-item">
-                {% trans "Search" %}
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">"{{ query }}"</li>
-        </ol>
-    </nav>
+    {% include "oscar/partials/breadcrumbs.html" with primary='search' %}
 {% endblock %}
 
 {% block column_left %}
-    {% if has_facets %}
-        <h4>{% trans "Refine your search" %}</h4>
-        <dl>
-            {% for field, data in facet_data.items %}
-                {% if data.results %}
-                    {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}
+    <div class="border border-gray-200 p-3 bg-white rounded-2xl md:mr-4">
+        <div class="flex flex-col space-y-4 divide-y divide-gray-200">
+            <div class="flex items-center justify-between">
+                <h4 class="text-lg font-semibold text-gray-800">{% trans "Filters" %}</h4>
+                <svg class="text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-vertical-icon lucide-sliders-vertical"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+            </div>
+            <div class="pt-4 hidden md:block">
+                {% if has_facets %}
+                    {% for field, data in facet_data.items %}
+                        {% if data.results %}
+                            {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <div class="flex flex-col items-center gap-4 p-4 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox-icon lucide-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    <p>{% trans "No filters found." %}</p>
+                </div>
                 {% endif %}
-            {% endfor %}
-        </dl>
-    {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
-{% block headertext %}
-    {% blocktrans with q=query %}
-        Products matching "{{ q }}"
-    {% endblocktrans %}
+{% block header %}
+    <div class="">
+        <h1 class="lg:text-2xl text-xl font-bold text-gray-900">
+            {% blocktrans with q=query %}
+                Products matching "{{ q }}"
+            {% endblocktrans %}
+        </h1>
+    </div>
 {% endblock %}
 
 {% block content %}
@@ -49,47 +55,90 @@
         {% endfor %}
         <input type="hidden" name="q" value="{{ search_form.q.value }}" />
 
-        {% if paginator.count %}
-            {% if paginator.num_pages > 1 %}
-                {% blocktrans with start=page.start_index end=page.end_index num_results=paginator.count %}
-                    Found <strong>{{ num_results }}</strong> results, showing <strong>{{ start }}</strong> to <strong>{{ end }}</strong>.
-                {% endblocktrans %}
-            {% else %}
-                {% blocktrans count num_results=paginator.count %}
-                    Found <strong>{{ num_results }}</strong> result.
-                {% plural %}
-                    Found <strong>{{ num_results }}</strong> results.
-                {% endblocktrans %}
-            {% endif %}
-            <div class="float-right">
-                {% include "oscar/partials/form_field.html" with field=search_form.sort_by %}
-            </div>
-        {% else %}
-            <p>
-                {% trans "Found <strong>0</strong> results." %}
-                {% if suggestion %}
-                    {% url 'search:search' as search_url %}
-                    {% blocktrans %}
-                        Did you mean <a href="{{ search_url }}?q={{ suggestion }}">"{{ suggestion }}"</a>?
-                    {% endblocktrans %}
+        <!-- Results Summary and Sort -->
+        <div class="p-4 mb-6 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="text-sm text-gray-600">
+                    {% if paginator.count %}
+                        {% if paginator.num_pages > 1 %}
+                            {% blocktrans with start=page.start_index end=page.end_index num_results=paginator.count %}
+                                Found <span class="font-medium text-gray-900">{{ num_results }}</span> results, showing <span class="font-medium text-gray-900">{{ start }}</span> to <span class="font-medium text-gray-900">{{ end }}</span>
+                            {% endblocktrans %}
+                        {% else %}
+                            {% blocktrans count num_results=paginator.count %}
+                                Found <span class="font-medium text-gray-900">{{ num_results }}</span> result
+                            {% plural %}
+                                Found <span class="font-medium text-gray-900">{{ num_results }}</span> results
+                            {% endblocktrans %}
+                        {% endif %}
+                    {% else %}
+                        <span class="text-gray-500">{% trans "Found <span class='font-medium text-gray-900'>0</span> results" %}</span>
+                        {% if suggestion %}
+                            {% url 'search:search' as search_url %}
+                            <div class="mt-2">
+                                {% blocktrans %}
+                                    Did you mean <a href="{{ search_url }}?q={{ suggestion }}" class="text-blue-600 hover:text-blue-800 underline">"{{ suggestion }}"</a>?
+                                {% endblocktrans %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                {% if paginator.count %}
+                    <div class="flex items-center space-x-2">
+                        <label for="{{ search_form.sort_by.id_for_label }}" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                            {% trans "Sort by:" %}
+                        </label>
+                        <select name="{{ search_form.sort_by.name }}" id="{{ search_form.sort_by.id_for_label }}" 
+                                class="block w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white">
+                            {% for choice in search_form.sort_by %}
+                                {{ choice.tag }}
+                            {% endfor %}
+                        </select>
+                    </div>
                 {% endif %}
-            </p>
-        {% endif %}
+            </div>
+        </div>
     </form>
 
+    <!-- Product Results -->
     {% if page.object_list %}
         <section>
-            <div>
-                <ol class="row list-unstyled ml-0 pl-0">
-                    {% for result in page.object_list %}
-                        <li class="col-sm-4 col-md-3 col-lg-3">{% render_product result.object %}</li>
-                    {% endfor %}
-                </ol>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {% for result in page.object_list %}
+                    <div class="group">
+                        {% render_product result.object %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-8">
                 {% include "oscar/partials/pagination.html" with page_obj=page %}
             </div>
         </section>
+    {% else %}
+        <!-- No Results State -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">{% trans "No products found" %}</h3>
+            <p class="text-gray-500 mb-6">
+                {% trans "We couldn't find any products matching your search. Try adjusting your filters or search terms." %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="{% url 'search:search' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% trans "Clear all filters" %}
+                </a>
+                <a href="/" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% trans "Browse all products" %}
+                </a>
+            </div>
+        </div>
     {% endif %}
-
 {% endblock %}
 
 {% block onbodyload %}

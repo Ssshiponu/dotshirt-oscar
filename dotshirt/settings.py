@@ -90,6 +90,8 @@ INSTALLED_APPS = [
     'apps.home.apps.HomeConfig',
 ]
 
+OSCAR_HIDDEN_FEATURES = ['wishlists']
+
 SITE_ID = 1
 
 MIDDLEWARE = [

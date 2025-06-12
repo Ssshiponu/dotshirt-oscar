@@ -22,10 +22,14 @@
             {% block controls %}
                 <div class="{% if style|default:"stacked" != 'stacked' %}col-sm-7{% endif %}{% if field.widget_type == 'checkbox' %} form-check{% endif %}">
                     {% block widget %}
-                        {% if field.widget_type == 'checkbox' %}
+                        {% if field.widget_type == 'Checkbox' %}
                             <label for="{{ field.auto_id }}" class="col-form-label {% if field.field.required %}required{% endif %}">
                                 {% render_field field %}
                                 {{ field.label|safe }}
+                            </label>
+                        {% elif True %}
+                             <label for="{{ field.auto_id }}" class="col-form-label {% if field.field.required %}required{% endif %}">
+                                {% render_field field %}
                             </label>
                         {% else %}
                             {% render_field field class+="form-control" %}
