@@ -59,8 +59,15 @@
       </div>
     </li>
   {% else %}
-    <li class="py-3 text-center">
-      <p class="text-xs text-gray-500">{% trans "Your basket is empty." %}</p>
+    <li>
+      <div class="bg-white p-6 text-center">
+            <div class="w-24 h-24 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag-icon lucide-shopping-bag"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <p class="text-gray-500 mb-6">
+                {% trans "Your cart is empty" %}
+            </p>
+        </div>
     </li>
   {% endif %}
 </ul>

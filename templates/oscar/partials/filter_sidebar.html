@@ -1,0 +1,23 @@
+{% load i18n %}
+<div class="border border-gray-200 p-3 bg-white rounded-2xl md:mr-4">
+    <div class="flex flex-col space-y-4 divide-y divide-gray-200">
+        <div class="flex items-center justify-between">
+            <h4 class="text-lg font-semibold text-gray-800">{% trans "Filters" %}</h4>
+            <svg class="text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-vertical-icon lucide-sliders-vertical"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+        </div>
+        <div class="pt-4 hidden md:block">
+            {% if has_facets %}
+                {% for field, data in facet_data.items %}
+                    {% if data.results %}
+                        {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+            <div class="flex flex-col items-center gap-4 p-4 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox-icon lucide-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                <p>{% trans "No filters found." %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

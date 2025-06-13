@@ -6,7 +6,7 @@
     <div id="addreview" class="review_add card card-body bg-light mb-4">
         <form id="add_review_form" method="post" action="#addreview">
             <fieldset>
-                <legend>{% trans "Leave a product review" %}</legend>
+                <legend class="font-bold text-gray-800">{% trans "Leave a product review" %}</legend>
                 {% csrf_token %}
 
                 {% include 'oscar/partials/form_field.html' with field=form.title %}
@@ -17,14 +17,13 @@
                     </label>
                     <div class="controls">
                         {{ form.score }}
-                        <div class="star-rating {{ form.score.value|as_stars }}">
+                        <div class="star-rating focus: {{ form.score.value|as_stars }}">
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                         </div>
-
                         {% for error in form.score.errors %}
                             <span class="error-block"><i class="fas fa-exclamation"></i> {{ error }}</span>
                         {% endfor %}
@@ -44,9 +43,9 @@
                 {% endif %}
 
 
-                <button type="submit" class="btn btn-primary btn-lg" data-loading-text="{% trans 'Saving...' %}">{% trans "Save review" %}</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded-full mr-3" data-loading-text="{% trans 'Saving...' %}">{% trans "Save review" %}</button>
                 {% trans "or" %}
-                <a href="{{ product.get_absolute_url }}">{% trans "cancel" %}</a>
+                <a class="text-red-600 underline hover:no-underline hover:text-red-800" href="{{ product.get_absolute_url }}">{% trans "cancel" %}</a>
             </fieldset>
         </form>
     </div>

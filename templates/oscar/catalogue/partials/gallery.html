@@ -12,18 +12,18 @@
                     {% for image in all_images %}
                         <div class="carousel-slide {% if forloop.first %}block{% else %}hidden{% endif %}" data-slide="{{ forloop.counter0 }}">
                             {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
-                            <img src="{{ thumb.url }}" class="w-full h-96 object-contain" alt="{{ product.get_title }}" />
+                            <img src="{{ thumb.url }}" class="w-full object-contain" alt="{{ product.get_title }}" />
                         </div>
                     {% endfor %}
                     
                     <!-- Navigation arrows -->
-                    <button class="carousel-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="carousel-prev absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                         <span class="sr-only">{% trans "Previous" %}</span>
                     </button>
-                    <button class="carousel-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="carousel-next absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
@@ -35,7 +35,7 @@
             <!-- Thumbnail indicators -->
             <div class="flex space-x-2 overflow-x-auto pb-2">
                 {% for image in all_images %}
-                    <button class="carousel-indicator flex-shrink-0 border-2 border-transparent hover:border-blue-500 rounded-lg overflow-hidden transition-all duration-200 {% if forloop.first %}border-blue-500{% endif %}" 
+                    <button class="carousel-indicator flex-shrink-0 aspect-square border-2 border-transparent hover:border-primary rounded-lg overflow-hidden transition-all duration-200 {% if forloop.first %}border-primary{% endif %}" 
                             data-slide="{{ forloop.counter0 }}">
                         {% oscar_thumbnail image.original "65x55" crop="center" as thumb %}
                         <img src="{{ thumb.url }}" class="w-16 h-14 object-cover" alt="{{ product.get_title }}" />
@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update indicators
         indicators.forEach(indicator => {
-            indicator.classList.remove('border-blue-500');
+            indicator.classList.remove('border-primary');
             indicator.classList.add('border-transparent');
         });
         indicators[index].classList.remove('border-transparent');
-        indicators[index].classList.add('border-blue-500');
+        indicators[index].classList.add('border-primary');
         
         currentSlide = index;
     }

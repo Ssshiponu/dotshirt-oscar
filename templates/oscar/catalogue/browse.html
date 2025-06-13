@@ -32,39 +32,7 @@
 {% endblock breadcrumbs %}
 
 {% block column_left %}
-    {% comment %} {% category_tree as tree_categories %}
-    {% if tree_categories %}
-        <h4>{% trans "Show results for" %}</h4>
-        <div class="side_categories card card-body bg-light">
-            <ul class="nav nav-list flex-column">
-                {% for tree_category in tree_categories %}
-                    <li class="mt-2">
-                        <a href="{{ tree_category.url }}">
-                            {% if tree_category.pk == category.pk %}
-                                <strong>{{ tree_category.name }}</strong>
-                            {% else %}
-                                {{ tree_category.name }}
-                            {% endif %}
-                        </a>
 
-                        {% if tree_category.has_children %}<ul>{% else %}</li>{% endif %}
-                        {% for n in tree_category.num_to_close %}
-                            </ul></li>
-                        {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-    {% if has_facets %}
-        <h4>{% trans "Refine by" %}</h4>
-        <div class="side_categories card card-body bg-light">
-            {% for field, data in facet_data.items %}
-                {% if data.results %}
-                    {% include 'oscar/search/partials/facet.html' with name=data.name items=data.results %}
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endif %} {% endcomment %}
     <div class="border border-gray-200 p-3 bg-white rounded-2xl md:mr-4">
         <div class="flex flex-col space-y-4 divide-y divide-gray-200">
             <div class="flex items-center justify-between">
@@ -90,13 +58,14 @@
 {% endblock %}
 
 {% block header %}
-    <div class="text-gray-800 mb-3 text-2xl font-bold border-b border-gray-200 pb-2">
+    <div class="text-gray-800 text-2xl font-bold">
         <h1>{{ summary }}</h1>
     </div>
 {% endblock header %}
 
 {% block content %}
 
+    <div class="border-b p-3">
     <form method="get">
         {# Render other search params as hidden inputs #}
         {% for value in selected_facets %}
@@ -129,6 +98,7 @@
             </p>
         {% endif %}
     </form>
+    </div>
     {% if products %}
         <section>
             <div>
@@ -143,7 +113,7 @@
             </div>
         </section>
     {% else %}
-        <div class="bg-white border border-gray-200 rounded-2xl p-10 mt-2 text-center">
+        <div class="bg-white p-10 mt-2 text-center">
             <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox-icon lucide-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
             </div>

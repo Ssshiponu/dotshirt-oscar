@@ -5,31 +5,39 @@
 
 {% purchase_info_for_product request product as session %}
 
-{% if session.price.exists %}
-    {% if session.price.excl_tax == 0 %}
-        <p class="text-lg text-green-600 font-semibold">{% trans "Free" %}</p>
-    {% elif session.price.is_tax_known %}
-        <p class="text-lg text-green-600 font-semibold">{{ session.price.incl_tax|intprice }}</p>
-    {% else %}
-        <p class="text-lg text-green-600 font-semibold">{{ session.price.excl_tax|intprice }}</p>
-    {% endif %}
-{% else %}
-    <p class="text-lg text-green-600 font-semibold">&nbsp;</p>
-{% endif %}
-{% if session.price.exists %}
-<p class="">
-    {% if session.availability.is_available_to_buy %}
-        <i class="fas fa-check-circle"></i>
-    {% else %}
-        <i class="fas fa-ban"></i>
-    {% endif %}
-    {% if verbose %}
-        {{ session.availability.message }}
-    {% else %}
-        {{ session.availability.short_message }}
-    {% endif %}
-</p>
-{% else %}
-    <i class="fas fa-ban"></i>
-    {% trans 'Unavailable' %}
-{% endif %}
+<div class="flex items-center gap-4">
+    <div>
+        {% if session.price.exists %}
+            {% if session.price.excl_tax == 0 %}
+                <p class="text-lg text-green-600 font-semibold">{% trans "Free" %}</p>
+            {% elif session.price.is_tax_known %}
+                <p class="text-lg text-green-600 font-semibold">{{ session.price.incl_tax|intprice }}</p>
+            {% else %}
+                <p class="text-lg text-green-600 font-semibold">{{ session.price.excl_tax|intprice }}</p>
+            {% endif %}
+        {% else %}
+            <p class="text-lg text-green-600 font-semibold">&nbsp;</p>
+        {% endif %}
+    </div>
+
+
+    {% if session.price.exists %}
+    <div>
+        <p class="mt-0 text-sm">
+            {% if session.availability.is_available_to_buy %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-green-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big-icon lucide-circle-check-big"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+            {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-red-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ban-icon lucide-ban"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+            {% endif %}
+            {% if verbose %}
+                {{ session.availability.short_message }}
+            {% else %}
+                {{ session.availability.message }}
+            {% endif %}
+        </p>
+        {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-red-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ban-icon lucide-ban"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+            {% trans 'Unavailable' %}
+        {% endif %}
+    </div>
+</div>

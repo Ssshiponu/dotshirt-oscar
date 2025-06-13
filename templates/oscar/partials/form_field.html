@@ -13,8 +13,8 @@
 
             {% block label %}
                 {% if not nolabel and field.widget_type != 'checkbox' %}
-                    <label for="{{ field.auto_id }}" class="{% if style|default:"stacked" != 'stacked' %}col-sm-4{% endif %} col-form-label{% if field.field.required %} required{% endif %}">
-                        {{ field.label|safe }}
+                    <label class="block text-sm font-medium text-gray-700 mb-3{% if field.field.required %} after:content-['*'] after:text-red-500 after:ml-1{% endif %}">
+                        {{ field.field.label }}
                     </label>
                 {% endif %}
             {% endblock %}
@@ -22,15 +22,41 @@
             {% block controls %}
                 <div class="{% if style|default:"stacked" != 'stacked' %}col-sm-7{% endif %}{% if field.widget_type == 'checkbox' %} form-check{% endif %}">
                     {% block widget %}
-                        {% if field.widget_type == 'Checkbox' %}
+                        {% if field.widget_type == 'checkbox' %}
                             <label for="{{ field.auto_id }}" class="col-form-label {% if field.field.required %}required{% endif %}">
                                 {% render_field field %}
                                 {{ field.label|safe }}
                             </label>
-                        {% elif True %}
-                             <label for="{{ field.auto_id }}" class="col-form-label {% if field.field.required %}required{% endif %}">
-                                {% render_field field %}
-                            </label>
+                        {% elif field.widget_type == 'radioselect' %}
+                            
+
+                            <div class="flex flex-wrap gap-3">
+                                {% if field.field.label|lower == "color" or field.field.label|lower == "colors" %}
+                                    {% for choice in field.field.choices %}
+                                        <div>
+                                            <input class="peer sr-only" type="radio" name="{{ field.name }}" value="{{ choice.1 }}" id="{{ field.auto_id }}_{{ forloop.counter }}">
+                                            <label for="{{ field.auto_id }}_{{ forloop.counter }}" class="block cursor-pointer peer-checked:ring-4 ring-primary ring-offset-2 rounded transition-all duration-200">
+                                                <span class="sr-only">{{ choice.1 }}</span>
+                                                <div class="{% if forloop.counter == 1 and not field.field.required %}py-2 px-3{% else %}w-10 h-10{% endif %} rounded border-2 border-gray-300" {% if forloop.counter != 1 or field.field.required %}style="background-color: {{ choice.0 }};"{% endif %}>
+                                                    {% if forloop.counter == 1 and not field.field.required %}Skip{% endif %}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for choice in field.field.choices %}
+                                        <div>
+                                            <input class="peer sr-only" type="radio" name="{{ field.name }}" value="{{ choice.1 }}" id="{{ field.auto_id }}_{{ forloop.counter }}">
+                                            <label for="{{ field.auto_id }}_{{ forloop.counter }}" class="block cursor-pointer peer-checked:ring-4 ring-primary ring-offset-2 rounded transition-all duration-200">
+                                                <div class="py-1.5 px-2.5 rounded border-2 border-gray-300">
+                                                    {{ choice.1 }}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        
                         {% else %}
                             {% render_field field class+="form-control" %}
                         {% endif %}

@@ -50,7 +50,7 @@
         {% endblock %}
 
         {% block product_main %}
-        <div class="w-full product_main space-y-6">
+        <div class="w-full">
             {% comment %}
                 This is a bit clunky here.  Better to have some kind of JS-driven dashboard menu that
                 pops out when clicked.  A bit like the Django-Debug-Toolbar button
@@ -62,7 +62,7 @@
             {% endif %}
             
             <div class="clear-both">
-                <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ product.get_title }}</h1>
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-4">{{ product.get_title }}</h1>
             </div>
 
             {% block product_stock_record %}
@@ -70,32 +70,35 @@
             {% endblock %}
 
             {% iffeature "reviews" %}
-                <div class="mb-4">
+                <div class="mt-3">
                     {% include "oscar/catalogue/reviews/partials/review_stars.html" %}
                 </div>
             {% endiffeature %}
 
             <hr class="border-gray-200 my-6"/>
-
-            {% if not product.is_parent %}
-                {% block product_basket_form %}
-                    {% include "oscar/catalogue/partials/add_to_basket_form.html" %}
-                {% endblock %}
-            {% else %}
-                {% block variants %}
-                    <div class="space-y-4">
-                        <h2 class="text-xl font-semibold text-gray-900">{% trans 'Variants:' %}</h2>
-                        <div class="space-y-2">
-                            {% for child in product.get_public_children %}
-                                {% purchase_info_for_product request child as child_session %}
-                                {% if child_session.availability.is_available_to_buy %}
-                                    <a href="{{ child.get_absolute_url }}" class="block text-blue-600 hover:text-blue-800 hover:underline transition-colors">{{ child.get_title }}</a>
-                                {% endif %}
-                            {% endfor %}
+            
+            <div class="flex">
+                {% if not product.is_parent %}
+                    {% block product_basket_form %}
+                        {% include "oscar/catalogue/partials/add_to_basket_form.html" %}
+                    {% endblock %}
+                {% else %}
+                    {% block variants %}
+                        <div class="space-y-4">
+                            <h2 class="text-xl font-semibold text-gray-900">{% trans 'Variants:' %}</h2>
+                            <div class="space-y-2">
+                                {% for child in product.get_public_children %}
+                                    {% purchase_info_for_product request child as child_session %}
+                                    {% if child_session.availability.is_available_to_buy %}
+                                        <a href="{{ child.get_absolute_url }}" class="block text-blue-600 hover:text-blue-800 hover:underline transition-colors">{{ child.get_title }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                {% endblock %}
-            {% endif %}
+                    {% endblock %}
+                {% endif %}
+                
+            </div>
         </div>
         {% endblock %}
 
@@ -152,7 +155,7 @@
                         <tr class="hover:bg-gray-50">
                             <th class="px-6 py-4 text-left text-sm font-medium text-gray-900 bg-gray-50 w-1/3">{% trans "Availability" %}</th>
                             <td class="px-6 py-4 text-sm text-gray-700">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold">
                                     {{ session.availability.message }}
                                 </span>
                             </td>
@@ -194,12 +197,12 @@
             </div>
 
             {% if product.num_approved_reviews == 0 %}
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
                     <p class="text-gray-600">
                         {% if product|is_review_permitted:user %}
                             {% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id as add_review_url %}
                                 {% blocktrans %}This product does not have any reviews yet -
-                                <a href="{{ add_review_url }}#addreview" class="text-blue-600 hover:text-blue-800 hover:underline">be the first to write one</a>.
+                                <a href="{{ add_review_url }}#addreview" class="text-green-600 hover:text-green-800 hover:underline">be the first to write one</a>.
                             {% endblocktrans %}
                         {% else %}
                             {% trans "This product does not have any reviews yet" %}.

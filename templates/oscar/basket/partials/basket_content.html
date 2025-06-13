@@ -24,17 +24,6 @@
 {% endif %}
 
 {% if not basket.is_empty %}
-    {% block basket_form_headers %}
-        <div class="basket-title d-none d-md-block">
-            <div class="row">
-                <h4 class="col-md-6">{% trans "Items to buy now" %}</h4>
-                <h4 class="col-md-3">{% trans "Quantity" %}</h4>
-                <h4 class="col-md-1 text-right">{% trans "Price" %}</h4>
-                <h4 class="col-md-2 text-right">{% trans "Total" %}</h4>
-            </div>
-        </div>
-    {% endblock %}
-
     {% block basket_form_main %}
         <form method="post" class="basket_summary" id="basket_formset">
             {% csrf_token %}
@@ -42,52 +31,73 @@
             {% for form in formset %}
                 {% with line=form.instance product=form.instance.product %}
                     {% purchase_info_for_line request line as session %}
-                    <div class="flex">
-                        <div class="flex p-2 m-4 relative">
-                            <div style="display:none">
+                    <div class="basket-item">
+                        <div class="flex flex-col md:flex-row items-start justify-between relative bg-white border border-gray-200 rounded-xl p-4 mb-4">
+                            <!-- Hidden form fields -->
+                            <div class="hidden">
                                 {{ form.save_for_later }}
                                 {{ form.DELETE }}
                             </div>
-                            <div class="aspect-square">
+
+                            <!-- Product Image -->
+                            <div class="w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
                                 {{ form.id }}
                                 {% with image=product.primary_image %}
-                                    {% oscar_thumbnail image.original "96x96" upscale=False as thumb %}
+                                    {% oscar_thumbnail image.original "128x128" upscale=False as thumb %}
                                     <a href="{{ product.get_absolute_url }}">
-                                        <img class="w-full" src="{{ thumb.url }}" alt="{{ product.get_title }}"/>
+                                        <img class="w-full h-full object-cover rounded-lg" src="{{ thumb.url }}" alt="{{ product.get_title }}" />
                                     </a>
                                 {% endwith %}
                             </div>
-                            <div class="flex p-3 gap-4">
-                                <div>
-                                    <div class="mb-2">
-                                        <a href="{{ product.get_absolute_url }}" class="block text-sm md:text-md font-semibold text-gray-900">{{ line.description }}</a>
-                                        <span class="text-sm text-gray-600">{{ session.availability.message }}</span>
+
+                            <!-- Product Details and Controls -->
+                            <div class="flex flex-col md:flex-row md:items-end w-full mt-3 md:mt-0 md:ml-4 gap-4">
+                                <!-- Description and Quantity -->
+                                <div class="flex-1">
+                                   
+                                    <div class="mb-3">
+                                        <a href="{{ product.get_absolute_url }}" class="block text-base md:text-lg font-semibold text-gray-900 hover:text-primary transition-colors duration-150">
+                                            {{ line.description }}
+                                        </a>
+                                        <span class="text-sm text-gray-500">{{ session.availability.message }}</span>
                                     </div>
-                                    
-                                    <div class="flex items-center gap-2">
-                                        {% render_field form.quantity class+="pl-3 py-1 text-sm w-16 border border-gray-200 rounded" %}
-                                        <button class="bg-primary px-2 py-1 text-white text-sm rounded" data-loading-text="{% trans 'Updating...' %}">{% trans 'Update' %}</button>
+                                    <div class="flex items-center gap-3">
+                                         <span>Qty:</span>
+                                        {% render_field form.quantity class+="w-16 pl-3 p-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary transition-all" %}
+                                        <button class="bg-primary text-white py-1.5 px-3 text-sm rounded-full hover:bg-primary-dark transition-colors duration-150" data-loading-text="{% trans 'Updating...' %}">
+                                            {% trans 'Update' %}
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="flex flex-col items-center gap-3 text-gray-800">
-                                    <div>Price: <span class="ml-2 font-semibold text-green-600">
-                                        {% if line.is_tax_known %}
-                                            {{ line.unit_price_incl_tax|intprice }}
-                                        {% else %}
-                                            {{ line.unit_price_excl_tax|intprice }}
-                                        {% endif %}
-                                    </span></div>
-                                    <div>Total: <span class="ml-2 font-semibold text-green-600">
-                                        {% if line.is_tax_known %}
-                                            {{ line.line_price_incl_tax|intprice }}
-                                        {% else %}
-                                            {{ line.line_price_excl_tax|intprice }}
-                                        {% endif %}
-                                    </span></div>
+
+                                <!-- Price Information -->
+                                <div class="flex flex-col items-start md:items-end gap-2 text-gray-800">
+                                    <div class="text-sm md:text-base">
+                                        Price: <span class="ml-2 font-semibold text-green-600">
+                                            {% if line.is_tax_known %}
+                                                {{ line.unit_price_incl_tax|intprice }}
+                                            {% else %}
+                                                {{ line.unit_price_excl_tax|intprice }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="text-sm md:text-base">
+                                        Total: <span class="ml-2 font-semibold text-green-600">
+                                            {% if line.is_tax_known %}
+                                                {{ line.line_price_incl_tax|intprice }}
+                                            {% else %}
+                                                {{ line.line_price_excl_tax|intprice }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <a href="#" data-id="{{ forloop.counter0 }}" data-behaviours="remove" class="absolute top-0 right-0 text-gray-600 hover:text-black" aria-label="Close">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+                            <!-- Remove Button -->
+                            <a href="#" data-id="{{ forloop.counter0 }}" data-behaviours="remove" class="absolute top-3 right-3 text-gray-500 hover:text-red-600 transition-colors duration-150" aria-label="Remove item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -97,7 +107,7 @@
     {% endblock %}
 
     <div class="row">
-        {% block vouchers %}
+        {% comment %} {% block vouchers %}
             {# Hide the entire section if a custom BasketView doesn't pass in a voucher form #}
             {% if voucher_form %}
                 <div class="col-sm-6">
@@ -116,7 +126,7 @@
                     </div>
                 </div>
             {% endif %}
-        {% endblock vouchers %}
+        {% endblock vouchers %} {% endcomment %}
 
         {% block baskettotals %}
             <div class="col-sm-6">
@@ -141,10 +151,14 @@
 
 {% else %}
     {% block emptybasket %}
-        <p>
-            {% trans "Your basket is empty." %}
-            <a href="{{ homepage_url }}">{% trans "Continue shopping" %}</a>
-        </p>
+        <div class="bg-white p-10 mt-2 text-center">
+            <div class="w-24 h-24 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag-icon lucide-shopping-bag"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <p class="text-gray-500 mb-6">
+                {% trans "Your cart is empty" %}
+            </p>
+        </div>
     {% endblock %}
 {% endif %}
 
